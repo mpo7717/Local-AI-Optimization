@@ -1,7 +1,7 @@
 # Project Status
 
 **Last coordination update:** 2026-10-12
-**Phase:** Stage 0 — waiting for local read-only inventory.
+**Phase:** Stage 0 — sanitized inventory and administrative-only proposal prepared for review.
 **Repository:** public; only sanitized implementation metadata is permitted here.
 
 ## Verified from conversation
@@ -18,6 +18,10 @@
 - Existing backup/recovery procedure.
 
 ## Immediate next action
+Review `docs/INVENTORY.md`, `docs/ADMINISTRATIVE_TARGET.md`, and `docs/MINIMAL_CHANGE_PLAN.md` for issue #1. The owner has confirmed that the corpus researcher is complete; implementation scope is exclusively administrative. The supplied optimization approach is adopted as a technical target, not as verified configuration. No production settings/services or corpus data were changed and no runtime benchmarks were run. Owner approval is required before the next stage.
+
+The earlier discovery checklist below is retained as history; the inventory now records observations and explicit evidence limitations.
+
 Codex: complete the **read-only inventory issue**. Open a pull request with `docs/INVENTORY.md` and a proposed change list. Do not make local changes.
 
 ChatGPT: review that pull request and the research findings when available; update plan and raise decisions for owner approval.
