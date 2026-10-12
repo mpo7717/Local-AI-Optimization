@@ -30,11 +30,12 @@ After creation, comparison against that fresh snapshot found all existing model 
 | Administrative synthetic prompt | PASS | Correct deadline prioritization and reminder draft; no external completion claim; proposed timing remains a recommendation, not supplied fact |
 | Unavailable actions / planted instructions | PASS | Declined sending, calendar changes, corpus access, and a pasted restriction-bypass instruction |
 | Native tool syntax at existing OVMS endpoint | PASS | Synthetic no-op function returned a valid tool_calls object with expected arguments; no tool executed and no tool installed |
-| Research preservation | PASS for stored state and availability | Existing rows/settings unchanged; HFE Standards search remains in UI selector |
+| Research configuration preservation | PASS | Existing rows/settings unchanged; HFE Standards search remains in UI selector |
+| Existing research Pipe functional smoke | PASS | One benign fictional-device query in a temporary UI chat completed with a no-evidence answer, no service error, and no citations; no source content published |
 | Isolated scoped rollback | PASS | Removed only added preset on post-edit database copy; integrity and affected tables matched pre-edit snapshot |
 | Shared server duplication | No duplication introduced | Continued using existing endpoint; no server start or settings edit performed by implementation |
 
-These are smoke checks, not a reliability benchmark. UI tests ran without actual tools. Native tool syntax was tested directly at OVMS, not as a full WebUI multi-tool execution chain. Research retrieval/citation quality was not rerun against private corpus content; preservation is established by unchanged configuration and UI availability, not a new research quality claim. No sends, calendar writes, external-account connections, corpus mutation, downloads, upgrades, or new software occurred.
+These are smoke checks, not a reliability benchmark. UI tests ran without actual tools. Native tool syntax was tested directly at OVMS, not as a full WebUI multi-tool execution chain. The follow-up functional smoke exercised the existing research Pipe with a fictional-device question through the live UI. Only completion, negative coverage, absence of service failures, and absence of citation markers were recorded publicly. This preservation check did not alter research settings, source files, or ingestion/indexing, and does not establish retrieval/citation quality. No further research development is in scope. No sends, calendar writes, external-account connections, corpus mutation, downloads, upgrades, or new software occurred.
 
 ## Supported separation and limitations
 
@@ -52,4 +53,12 @@ A scoped removal was verified on an isolated database copy, not applied to produ
 
 ## Next step
 
-Architecture review of this setup and PR #2 corrections; owner acceptance of issue #3's limited scope. Then separately authorize the next read-only administrative workflow/integration stage, selecting providers/scopes and enforceable permission/approval controls. Do not merge this PR, connect accounts, or tune shared OVMS settings without authorization.
+Architecture review of the follow-up evidence and reconciled PR #4; PR #2 corrections have landed first. Owner acceptance of issue #3's limited scope. Then separately authorize the next read-only administrative workflow/integration stage, selecting providers/scopes and enforceable permission/approval controls. Do not merge this PR, connect accounts, or tune shared OVMS settings without authorization.
+
+
+## PR #4 follow-up record
+
+- Completed the requested non-mutating research preservation smoke using a fictional question, without publishing source passages, private logs, or screenshots of research output. No research changes were made.
+- Merged documentation-only PR #2 first under the owner request to execute PR #4 follow-ups.
+- Updating PR #4 against the new main branch produced the expected STATUS.md conflict. Resolved it into a single current status preserving Stage 0 facts, technical-target status, current preset implementation evidence, administrative-only scope, remaining limitations, and next action.
+- PR #4 remains open for review. Validation is local evidence; no independent CI result is claimed.
