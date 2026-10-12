@@ -1,0 +1,40 @@
+# Local secrets and configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*token*
+*secret*
+*credential*
+*.sqlite
+*.db
+*.log
+
+# Local document corpus, data and model assets
+corpus/
+incoming/
+data/
+models/
+checkpoints/
+backups/
+private/
+*.pdf
+*.doc
+*.docx
+*.xlsx
+*.pptx
+*.gguf
+*.safetensors
+*.bin
+
+# Local tool/runtime output
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+dist/
+build/
