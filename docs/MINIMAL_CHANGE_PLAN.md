@@ -50,7 +50,7 @@ Rollback: restore the pinned previously measured configuration; retain sanitized
 4. Is the reported OVMS target build available/compatible, and is an upgrade actually necessary?
 5. Can current WebUI enforce profile/tool isolation and budgets, or what smallest adapter is needed?
 6. What is actual GPU headroom with unchanged search services and research requests?
-7. Are backups restorable, binds/firewall appropriate, and mailbox/source access protected?
+7. Are backups restorable, binds/firewall appropriate, and access boundaries verified?
 8. What observable research checks should confirm preservation without reopening research work?
 
 Do not merge, deploy, start tests/services, or proceed to subsequent stages based on this proposal alone.

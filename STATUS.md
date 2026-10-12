@@ -1,36 +1,28 @@
 # Project Status
 
-**Last coordination update:** 2026-10-12
-**Phase:** Stage 0 — sanitized inventory and administrative-only proposal prepared for review.
-**Repository:** public; only sanitized implementation metadata is permitted here.
+Last coordination update: 2026-10-12.
+Phase: Stage 0 inventory prepared in PR #2; review corrections addressed locally. Issue #3 authorizes a separate, reversible Stage 1 administrative preset setup subject to backup and isolation verification.
+Repository: public; sanitized implementation metadata only.
 
-## Verified from conversation
-- Owner wants Codex to implement and ChatGPT to review through shared GitHub artifacts, minimizing manual handoffs.
-- Current intended stack: Windows, Open WebUI, OVMS, local GPT-OSS-20B, existing HFE Corpus Worker.
-- Two logical assistant profiles are planned: Administrative/Agent and HFE Corpus/Research.
-- Deep Research on GPT-OSS agent/workflow optimization has been requested; findings are not yet adopted as verified configuration.
+## Inspected facts
 
-## Not yet verified locally
-- Actual installed versions and settings.
-- Open WebUI Native tool calling and OVMS GPT-OSS parser compatibility.
-- Tool permissions and external connector readiness.
-- Corpus Worker source tree, schedules, indexing details, and current test coverage.
-- Existing backup/recovery procedure.
+Launcher and package metadata, model assets and configured sampling/parsers, WebUI stored presets, existing research implementation, backup/test artifacts, and startup scripts were inspected. See docs/INVENTORY.md for evidence labels and limitations. Production configuration was not changed during Stage 0.
 
-## Immediate next action
-Review `docs/INVENTORY.md`, `docs/ADMINISTRATIVE_TARGET.md`, and `docs/MINIMAL_CHANGE_PLAN.md` for issue #1. The owner has confirmed that the corpus researcher is complete; implementation scope is exclusively administrative. The supplied optimization approach is adopted as a technical target, not as verified configuration. No production settings/services or corpus data were changed and no runtime benchmarks were run. Owner approval is required before the next stage.
+## Still untested
 
-The earlier discovery checklist below is retained as history; the inventory now records observations and explicit evidence limitations.
+Current runtime versions and native tool behavior; effective profile separation; backup restoration; shared GPU utilization; provider readiness. No private user content is authorized for tests.
 
-Codex: complete the **read-only inventory issue**. Open a pull request with `docs/INVENTORY.md` and a proposed change list. Do not make local changes.
+## Scope and next action
 
-ChatGPT: review that pull request and the research findings when available; update plan and raise decisions for owner approval.
+The owner reports the corpus researcher complete. The next implementation stage is administrative-only; preserve the completed researcher. This does not cancel the separate research profile or future Incoming workflows, which remain separately scoped.
 
-Owner: open this repository in Codex, point it to the first issue, and approve only the read-only inspection.
+Review PR #2 corrections without merging. Implement only the bounded scope of issue #3 after verifying local backup/restore and effective separation. Report tested outcomes and blockers in a separate PR. Shared OVMS changes, upgrades, external connections, and consequential writes remain unapproved.
 
 ## Decision log
-- D-001: One Open WebUI and one OVMS backend are the starting architecture; split profiles logically.
-- D-002: Preserve and extend the existing Corpus Worker rather than replacing it.
-- D-003: Require approval for consequential write actions.
-- D-004: No unverified model-tuning claims or production changes before baseline measurements.
-- D-005: Public repository accepted for now; keep secrets, corpus contents, internal configuration, and sensitive operational details off GitHub.
+
+- One WebUI and shared primary chat backend remain the starting architecture.
+- Preserve the completed researcher and source collections.
+- Require approval for consequential external actions.
+- The optimization report is a selected technical target, not verified runtime configuration.
+- Keep private security findings and operational detail local.
+- Issue #3 authorizes only reversible administrative preset setup and synthetic read-only tests, with backup/restore and isolation gates.

@@ -1,6 +1,6 @@
 # Administrative agent technical target
 
-User-selected on 2026-10-12 from the supplied GPT-OSS optimization report. This is a target, not a verified vendor specification or deployed configuration. The researcher is complete and excluded from implementation scope.
+User-selected on 2026-10-12 from the supplied GPT-OSS optimization report. This is a target, not a verified vendor specification or deployed configuration. The researcher is complete and excluded from the next implementation stage; future corpus work remains separately scoped.
 
 | Setting | Starting target |
 |---|---|

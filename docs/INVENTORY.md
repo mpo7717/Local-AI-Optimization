@@ -4,7 +4,7 @@ Inspection date: 2026-10-12. Addresses issue #1.
 
 ## Scope and evidence
 
-The owner has confirmed that the corpus researcher is complete. Implementation scope is exclusively the Administrative/Agent profile in the existing Open WebUI deployment. Corpus observations below establish preservation boundaries, not a research backlog.
+The owner has confirmed that the corpus researcher is complete. The next implementation stage is exclusively the Administrative/Agent profile in the existing Open WebUI deployment. Future corpus work remains separately scoped and requires authorization. Corpus observations below establish preservation boundaries, not a research backlog.
 
 - **VERIFIED** means observed in files, package metadata, stored database records, or read-only operating-system output. Configuration presence does not establish runtime success.
 - **INFERRED** means suggested by architecture or historical documentation.
@@ -46,7 +46,7 @@ No Windows service registration/start mode was established. Preserve existing la
 
 The stored general GPT-OSS preset uses Native function calling, temperature 0.7, top-p 0.9, and maximum output 4,096 tokens. Installed research Pipe selects GPT-OSS-20B and uses its own settings. A model alias has a Qwen-related ID but a GPT-OSS display name/backend, creating selection ambiguity.
 
-**VERIFIED settings requiring review:** public-cloud and local model connection entries coexist; web search enabled; browser code execution enabled with Pyodide; per-tool permission enforcement disabled; broad feature capability flags include terminal and vision without evidence of operational support. Public sharing defaults are disabled, while workspace and chat permissions are broad. These observations do not prove cloud traffic, available vision, terminal access, or working provider integrations.
+**VERIFIED configuration review:** Stored feature and connection settings need runtime validation. Settings and capability flags do not prove effective access or working integrations. Detailed security findings are retained locally, not published.
 
 **NOT TESTED:** effective authentication, group/access grants, profile-level isolation, UI behavior, global versus per-profile controls, external provider credentials/readiness, project-management integration, and network exposure. Existing connected tools in the implementation environment are not evidence of integrations in local WebUI.
 
@@ -54,9 +54,9 @@ The stored general GPT-OSS preset uses Native function calling, temperature 0.7,
 
 **VERIFIED source/configuration architecture:** FastAPI Worker; SQLite/WAL document/job/queue/chunk stores; FTS5 keyword plus semantic retrieval and reranking; metadata/standard filters; page context and local-copy citations. Ingestion uses Drive or approved research intake, native extraction, bounded Tesseract/RapidOCR, section-aware chunking, embeddings, and self-retrieval checks. Table extraction and parallel extraction/OCR are configured. Curation, review states, bounded batches, paused startup, heat guard, update supervision, and evaluation scripts exist.
 
-Base database contains 664 document records, 627 INDEXED statuses, 52,856 chunks, and 241 queue rows. Counts exclude WAL and do not establish current backlog or completion state. Historical quality claims were not rerun. The research Pipe uses fixed read-only retrieval steps with citation checks and a repair path. The owner reports the researcher complete; this issue does not authorize corpus maintenance or backlog processing.
+Base-database inspection confirmed existing indexed records, passages, and queue entries; precise volumes are omitted from the public report. Counts exclude WAL and do not establish current completion state. Historical quality claims were not rerun. The research Pipe uses fixed read-only retrieval steps with citation checks and a repair path. The owner reports the researcher complete; this issue does not authorize corpus maintenance or backlog processing.
 
-**Boundary concerns:** Worker HTTP writes are token-gated; local read/search/file access remains open. Browser origins are restricted and worker launcher binds loopback. The filesystem mailbox is another control path whose ACLs were not checked. Drive credential creation requests full Drive scope, not a read-only scope; actual granted scope and source-mutation exposure are not established. Do not expose these control paths to administrative tools.
+**Boundary review:** Administrative permissions and separation require effective runtime checks before new capabilities are enabled. Detailed access/control findings are retained locally and omitted from this public report.
 
 ## Backups, logs, tests, and conflicts
 
@@ -64,7 +64,7 @@ Base database contains 664 document records, 627 INDEXED statuses, 52,856 chunks
 
 **NOT TESTED:** backup consistency/completeness, restore success, retention, encryption, ACLs, current log errors, current test pass rates, thermal guard behavior, or effective network binding for WebUI/OVMS. Raw log content was not published or used to establish current health.
 
-Potential conflicts: stale documentation; development/legacy/test installations alongside production; shared chat settings affecting the completed research profile; GPU contention with embeddings/reranker; cloud endpoint retained despite local inference intent; capability flags exceeding verified features; lifecycle controls competing with any new scheduler. WAL sidecars require a deliberate backup/restore strategy, not an assumption that copying only a database file is sufficient.
+Potential conflicts: stale documentation; development/legacy/test installations alongside production; shared chat settings affecting the completed research profile; GPU contention with embeddings/reranker; unverified integration and capability behavior; lifecycle controls competing with any new scheduler. WAL sidecars require a deliberate backup/restore strategy, not an assumption that copying only a database file is sufficient.
 
 ## What is established and what remains
 
