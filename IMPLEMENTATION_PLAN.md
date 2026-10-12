@@ -1,5 +1,17 @@
 # Implementation Plan
 
+## Current priority — Administrative Assistant tools (Issue #5)
+The immediate goal is **reliable end-to-end Open WebUI tool calling**, then Gmail, Google Calendar, Google Drive, and sourced web research. Complete the limited Administrative Assistant preset in PR #4 first. Keep the existing OVMS settings unchanged; defer KV-cache, batching, and concurrency tuning until working tool flows are measured.
+
+1. **Tool path:** validate Open WebUI → GPT-OSS/OVMS → permitted tool → validated result → accurate response with synthetic fixtures. Test wrong tools, invalid arguments, timeouts, retries, bounded steps, and prompt injection.
+2. **Google read/search:** Gmail search/read and response preparation; Calendar events and free/busy; Drive search/read and source links. Choose a maintained connector and least-privilege account consent. Account connections require explicit owner authorization.
+3. **Web research:** bounded search and public-page retrieval with clear source URLs, dates, citations, cross-checks, rate limits, and protections against accessing private network services.
+4. **Approved actions:** drafts and writes only under separately authorized scopes, with exact user approval, duplicate prevention, and independent read-back.
+5. **Optimization last:** measure task reliability and latency before proposing any shared model-server changes.
+
+**Scope:** The HFE Research assistant is complete and out of scope. Preserve its configuration without reopening research work or adding HFE functional tests. Issue #5 contains detailed acceptance criteria and safety boundaries. This priority section supersedes any older HFE work items below; those remain historical context only.
+
+
 ## Stage 0 — Discover and protect (first task; no local changes)
 **Goal:** establish a trustworthy baseline without disruption.
 
@@ -24,14 +36,14 @@ Codex tasks:
 ## Stage 2 — Two user-facing assistants
 - Set up Administrative/Agent and HFE Corpus/Research profiles in the existing Open WebUI instance.
 - Keep instructions, tool access, retrieval sources, and logs separated as supported and verified.
-- Test an administrative briefing and a page-cited HFE comparison against approved synthetic or non-sensitive fixtures.
+- Test the administrative briefing with synthetic fixtures; do not reopen HFE research.
 - Verify isolation: admin cannot accidentally invoke corpus-maintenance actions; corpus assistant cannot send email.
 
 **Exit:** each profile works through the GUI and passes isolation/grounding tests.
 
-## Stage 3 — Bounded workflows and approvals
+## Stage 3 — Bounded administrative workflows and approvals (historical outline)
 - Administrative: search → draft → human approval → execute → verify.
-- Corpus: weekly Incoming processing through the **existing** worker, preserving OCR, metadata, review queue, provenance, and controlled standards.
+- Corpus workflows are outside the current administrative implementation scope and require a separate owner request.
 - Add safe retries, duplicate protection, execution IDs, error reports, and explicit review states.
 - Keep single-agent sequential execution unless testing justifies concurrency.
 
