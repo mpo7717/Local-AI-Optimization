@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-12.
-Phase: Issue #5 Phase A follow-up bounded controller core implemented with isolated synthetic regressions; live WebUI wrapper remains pending. PR #4 remains the preset documentation dependency.
+Phase: Issue #5 Phase A follow-up controller and synthetic WebUI wrapper implemented and tested in isolation; live wrapper tests await the existing chat stack. PR #4 remains the preset documentation dependency.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -33,7 +33,7 @@ Reliable production multi-tool execution (basic synthetic execution is now prove
 
 ## Next action
 
-Review PR #4, Phase A evidence, and the stacked bounded-controller core. Forty-one offline tests pass (26 controller and 15 fixture); no live deployment occurred. See `docs/ADMIN_BOUNDED_CONTROLLER.md` for the host contract and limitations. Next implement and validate the minimal administrative-only WebUI wrapper with synthetic cases before deployment approval. Select provider/resources/scopes afterward. No automatic merges, live provider enablement, shared tuning, upgrades, or consequential actions.
+Review PR #4, Phase A evidence, the controller core, and the stacked synthetic WebUI wrapper. Fifty-nine offline tests pass under the installed Python 3.11 runtime; the installed WebUI loader accepts the bundle in isolated scratch storage. See `docs/ADMIN_WEBUI_WRAPPER.md` for the contract and untested live boundary. Next reopen the existing HFE Chat shortcut, validate the temporary synthetic Pipe through the UI, clean it up and compare configuration before permanent deployment approval. No live installation or account connection occurred. Select provider/resources/scopes afterward. No automatic merges, shared tuning, upgrades, or consequential actions.
 
 ## Decision log
 
