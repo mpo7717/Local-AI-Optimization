@@ -173,18 +173,26 @@ class Controller:
                     return
                 calls = message.get("tool_calls")
                 if calls is None or calls == []:
+                    rejection = "FINAL_FORMAT_INVALID"
                     try:
                         final = strict_object(message.get("content"))
                         receipts = final.get("receipts")
                         known = {e["receipt"] for e in out.evidence}
+                        rejection = "FINAL_FIELDS_INVALID"
                         if (set(final) != {"answer", "receipts"} or not isinstance(final["answer"], str)
-                                or not final["answer"] or not isinstance(receipts, list)
-                                or any(type(x) is not str or x not in known for x in receipts)
+                                or not final["answer"] or not isinstance(receipts, list)):
+                            raise Invalid(rejection)
+                        rejection = "FINAL_EVIDENCE_INVALID"
+                        if (any(type(x) is not str or x not in known for x in receipts)
                                 or len(set(receipts)) != len(receipts) or not receipts or not out.evidence):
-                            raise Invalid("FINAL_EVIDENCE_INVALID")
+                            raise Invalid(rejection)
+                        rejection = "FINAL_VERIFIER_REJECTED"
                         if verify_answer(final["answer"], receipts, out.evidence) is not True:
-                            raise Invalid("FINAL_NOT_VERIFIED")
+                            raise Invalid(rejection)
                     except Exception:
+                        # Fixed diagnostic codes only: never retain raw terminal
+                        # text, receipts, data, exception text, or model reasoning.
+                        out.events.append({"kind": "rejection", "code": rejection})
                         out.reason = "FINAL_NOT_VERIFIED"
                         return
                     out.status, out.reason, out.answer = "verified", "OK", final["answer"]

@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-12.
-Phase: Issue #5 Phase A follow-up bounded controller core implemented with isolated synthetic regressions; live WebUI wrapper remains pending. PR #4 remains the preset documentation dependency.
+Phase: Issue #5 Phase A answer reliability follow-up implemented for review: native diagnostics and optional fixed-step synthetic reads. Earlier live completion failures remain unresolved; no production deployment. PR #4 remains the preset documentation dependency.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -16,12 +16,12 @@ Implementation is administrative-only. The existing corpus researcher is complet
 - Administrative Assistant is a distinct selectable preset on the existing GPT-OSS backend, with Native calling, temperature 0.1, top-p 0.9, maximum output 4096, no tool/knowledge attachments, and disabled built-in capabilities.
 - Consistent local backup, isolated restore and scoped rollback, synthetic administrative UI checks, backend native no-op call syntax, and existing-configuration comparisons passed.
 - The existing HFE Pipe completed one benign synthetic no-evidence query without service error or citations. This is a functional smoke check, not corpus quality evaluation or a new research feature.
-- Research/global configuration and shared server settings were preserved. No accounts, tools, apps, controller, or integrations were added.
+- Research/global configuration and shared server settings were preserved. The original preset stage added no accounts, executable tools or integrations; later controller tests were temporary and have been cleaned up.
 - See docs/ADMINISTRATIVE_SETUP.md for exact scope, limitations, and rollback.
 
 ## Remaining untested / unimplemented
 
-Reliable production multi-tool execution (basic synthetic execution is now proven); enforceable permissions for future integrations; GPU combined-workload performance; external-provider readiness; administrative workflow controller, approval execution, and provider read-back verification. The current tool-free preset is for planning/drafting, not autonomous actions. Research retrieval/citation quality was not re-evaluated.
+Reliable production multi-tool execution (basic synthetic execution is proven); enforceable permissions for future integrations; GPU combined-workload performance; external-provider readiness; production controller integration, approval execution and provider read-back verification. The current tool-free preset is for planning/drafting, not autonomous actions. Research retrieval/citation quality was not re-evaluated.
 
 ## Issue #5 Phase A results
 
@@ -33,7 +33,7 @@ Reliable production multi-tool execution (basic synthetic execution is now prove
 
 ## Next action
 
-Review PR #4, Phase A evidence, and the stacked bounded-controller core. Forty-one offline tests pass (26 controller and 15 fixture); no live deployment occurred. See `docs/ADMIN_BOUNDED_CONTROLLER.md` for the host contract and limitations. Next implement and validate the minimal administrative-only WebUI wrapper with synthetic cases before deployment approval. Select provider/resources/scopes afterward. No automatic merges, live provider enablement, shared tuning, upgrades, or consequential actions.
+Review PR #4, Phase A evidence, PR #8's core and draft PR #9's wrapper/live results and reliability follow-up. Seventy-four offline tests pass under the installed Python 3.11 runtime, and the updated bundle passes the isolated WebUI loader. Six fresh direct synthetic OVMS diagnostics produced verified reads/retry and expected permission/malformed stops, but did not reproduce earlier UI completion failures or establish a reliability rate. An explicit fixed-read mode now renders validated data and receipts without model calls; native remains the default. See `docs/ADMIN_ANSWER_RELIABILITY.md` for the contract and evidence limits. Next review the fixed-read contract, then temporarily test that mode through WebUI before proposing permanent routing. Earlier temporary artifacts remain removed; this follow-up made no production configuration changes. No account connection, automatic merges, shared tuning, upgrades or consequential actions.
 
 ## Decision log
 
