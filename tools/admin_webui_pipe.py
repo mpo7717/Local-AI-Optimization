@@ -30,7 +30,7 @@ class Ledger:
 class Pipe:
     """Only synthetic project reads; no provider credentials or external tools."""
 
-    PROFILE = "administrative-bounded-test"
+    PROFILE = "administrative_bounded_test"
     RECORDS = {
         "ALDER-001": {"project_id": "ALDER-001", "owner": "Alex", "due_day": "Friday", "status": "draft"},
         "BIRCH-002": {"project_id": "BIRCH-002", "owner": "Sam", "due_day": "Thursday", "status": "review"},
@@ -43,7 +43,8 @@ class Pipe:
     async def _complete(self, messages, specs):
         import aiohttp  # Already present in the inspected WebUI runtime.
         payload = {"model": "gpt-oss-20b", "messages": messages, "tools": specs,
-                   "tool_choice": "auto", "stream": False, "temperature": 0.1,
+                   "tool_choice": "auto" if any(m.get("role") == "tool" for m in messages) else "required",
+                   "stream": False, "temperature": 0.1,
                    "top_p": 0.9, "max_tokens": 4096}
         # Fixed inspected loopback endpoint. Never forward user URLs, API keys,
         # cookies, WebUI credentials, arbitrary settings, or attached tools.
@@ -88,22 +89,45 @@ class Pipe:
                 or __user__.get("role") not in {"admin", "user"}
                 or type(__user__.get("id")) is not str or not __user__["id"]
                 or metadata.get("user_id") != __user__["id"]
+                or __metadata__.get("user_id") != __user__["id"]
                 or metadata.get("model", {}).get("id") != self.PROFILE
                 or __metadata__.get("model", {}).get("id") != self.PROFILE
                 or body.get("model") != self.PROFILE):
             return stop("CONTEXT_DENIED")
         if __task__ or metadata.get("task"):
             return "Synthetic administrative test"  # No tools for title/background tasks.
-        workflow_id = metadata.get("message_id") or metadata.get("assistant_message_id")
+        # WebUI enriches its per-model copy after assigning request.state.metadata.
+        user_message_id = __metadata__.get("user_message_id")
+        if user_message_id and user_message_id != metadata.get("user_message_id"):
+            return stop("CONTEXT_DENIED")
+        # Regeneration assigns a new assistant response ID to the same user
+        # message. Keep its existing budget/stop claim rather than restarting.
+        workflow_id = user_message_id or __metadata__.get("message_id") or __metadata__.get("assistant_message_id")
         if type(workflow_id) is not str or not workflow_id:
             return stop("WORKFLOW_ID_REQUIRED")
         if any(value is not None and not isinstance(value, dict)
                for value in (body.get("features"), metadata.get("features"))):
             return stop("ATTACHMENTS_DENIED")
-        if (any(body.get(key) or metadata.get(key) for key in ("files", "tool_ids", "tool_servers"))
-                or any((body.get("features") or {}).values())
-                or any((metadata.get("features") or {}).values())):
-            return stop("ATTACHMENTS_DENIED")
+        if body.get("files") or metadata.get("files"):
+            return stop("ATTACHMENTS_DENIED_FILES")
+        if any(body.get(key) or metadata.get(key) for key in ("tool_ids", "tool_servers")):
+            return stop("ATTACHMENTS_DENIED_TOOLS")
+        # The installed UI sends memory=true even for a memory-disabled model.
+        # utils.memory.add_memory_context checks this trusted model capability
+        # before reading any memory. Never infer that denial from client flags.
+        def memory_disabled(model):
+            info = model.get("info") or {}
+            meta = info.get("meta") or {} if isinstance(info, dict) else {}
+            caps = meta.get("capabilities") or {} if isinstance(meta, dict) else {}
+            return isinstance(caps, dict) and caps.get("memory") is False
+        for features in (body.get("features") or {}, metadata.get("features") or {}):
+            for key, value in features.items():
+                if not value:
+                    continue
+                if (key == "memory" and value is True and memory_disabled(metadata["model"])
+                        and memory_disabled(__metadata__["model"])):
+                    continue
+                return stop("ATTACHMENTS_DENIED_FEATURES")
         messages = body.get("messages")
         if not isinstance(messages, list) or not messages or not isinstance(messages[-1], dict):
             return stop("TASK_INVALID")
@@ -176,17 +200,22 @@ class Pipe:
             return answer == expected and any(item["data"] == record for item in cited)
 
         prompt = (task + "\nUse read_project scenario " + requested_scenario
-                  + ". After reading the requested project, final JSON answer must equal exactly: " + expected)
+                  + ". Execute the requested read through native tools before answering. "
+                  + "After a successful read return only a JSON object with answer and receipts. "
+                  + "Receipts must contain the actual successful read receipt from the tool, never a placeholder. "
+                  + "No markdown fences or extra prose. The answer string must equal exactly: " + expected)
         try:
             outcome = await Controller(tools, **self.limits).run(prompt,
                 Context("administrative-assistant", __user__["id"], workflow_id),
                 self.completion or self._complete, verify)
         except asyncio.CancelledError:
+            await self._status(__event_emitter__, "Synthetic workflow cancelled: no external action performed", True)
             raise  # Tombstone survives cancellation; never retry with a fresh budget.
         except Exception:
             await self._status(__event_emitter__, "Synthetic workflow stopped: CONTROLLER_FAILURE", True)
             return stop("CONTROLLER_FAILURE")
-        await self._status(__event_emitter__, "Synthetic workflow " + outcome.status + ": " + outcome.reason, True)
+        await self._status(__event_emitter__, "Synthetic workflow " + outcome.status + ": " + outcome.reason
+                           + f" ({outcome.actions} actions, {outcome.model_rounds} model rounds)", True)
         if outcome.status != "verified":
             return stop(outcome.reason)
         receipts = ", ".join(item["receipt"] for item in outcome.evidence if item["data"] == record)

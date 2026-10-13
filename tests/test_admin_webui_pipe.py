@@ -85,6 +85,14 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
         del self.metadata["message_id"]
         self.assertIn("WORKFLOW_ID_REQUIRED", await self.run_pipe())
 
+    async def test_per_model_host_metadata_supplies_later_message_id(self):
+        per_model = dict(self.metadata)
+        del self.metadata["message_id"]
+        self.assertIn("Read receipt:", await self.run_pipe(__metadata__=per_model))
+
+    async def test_per_model_user_must_match_authenticated_request(self):
+        self.assertIn("CONTEXT_DENIED", await self.run_pipe(__metadata__={**self.metadata, "user_id": "other"}))
+
     async def test_background_task_does_not_execute_tools(self):
         self.assertEqual(await self.run_pipe(__task__="title_generation"), "Synthetic administrative test")
         self.assertFalse(self.path.exists())
@@ -101,8 +109,28 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("SUPPORTED_SYNTHETIC_PROJECT_REQUIRED", await self.run_pipe())
         self.assertFalse(self.path.exists())
 
+    async def test_inert_memory_flag_requires_explicit_host_capability_denial(self):
+        self.metadata["features"] = {"memory": True, "web_search": False}
+        self.assertIn("ATTACHMENTS_DENIED_FEATURES", await self.run_pipe())
+        self.metadata["model"]["info"] = {"meta": {"capabilities": {"memory": False}}}
+        self.assertIn("Read receipt:", await self.run_pipe())
+
+    async def test_client_memory_capability_cannot_override_host_permission(self):
+        self.metadata["features"] = {"memory": True}
+        self.body["model_info"] = {"meta": {"capabilities": {"memory": False}}}
+        self.assertIn("ATTACHMENTS_DENIED_FEATURES", await self.run_pipe())
+        self.assertFalse(self.path.exists())
+
     async def test_reload_does_not_reset_completed_workflow(self):
         await self.run_pipe()
+        replacement = Model(call("read_project", {"project_id": "BIRCH-002"}))
+        self.assertIn("DUPLICATE_WORKFLOW", await self.run_pipe(self.pipe(replacement)))
+        self.assertEqual(replacement.calls, 0)
+
+    async def test_regenerated_response_keeps_originating_user_message_claim(self):
+        self.metadata["user_message_id"] = "synthetic-origin"
+        await self.run_pipe()
+        self.metadata["message_id"] = "regenerated-response"
         replacement = Model(call("read_project", {"project_id": "BIRCH-002"}))
         self.assertIn("DUPLICATE_WORKFLOW", await self.run_pipe(self.pipe(replacement)))
         self.assertEqual(replacement.calls, 0)
@@ -158,6 +186,22 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(cancelled.is_set())
         self.assertIn("DUPLICATE_WORKFLOW", await self.run_pipe())
 
+    async def test_cancellation_emits_finished_status_before_propagating(self):
+        entered = asyncio.Event()
+        events = []
+        async def slow(messages, specs):
+            entered.set()
+            await asyncio.sleep(10)
+        async def emitter(event):
+            events.append(event)
+        task = asyncio.create_task(self.run_pipe(self.pipe(slow), __event_emitter__=emitter))
+        await asyncio.wait_for(entered.wait(), 1)
+        task.cancel()
+        with self.assertRaises(asyncio.CancelledError):
+            await task
+        self.assertTrue(events[-1]["data"]["done"])
+        self.assertIn("cancelled", events[-1]["data"]["description"])
+
     async def test_bounded_stop_is_visible_in_status_events(self):
         events = []
         async def emitter(event):
@@ -212,6 +256,9 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(captured["url"], "http://127.0.0.1:8000/v3/chat/completions")
             self.assertFalse(captured["request"]["allow_redirects"])
             self.assertFalse(captured["request"]["json"]["stream"])
+            self.assertEqual(captured["request"]["json"]["tool_choice"], "required")
+            await self.pipe()._complete([{"role": "tool", "content": "synthetic"}], [])
+            self.assertEqual(captured["request"]["json"]["tool_choice"], "auto")
             self.assertNotIn("headers", captured["request"])
             payload = b"x" * 262145
             with self.assertRaisesRegex(ValueError, "MODEL_RESPONSE_SIZE"):

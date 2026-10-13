@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-12.
-Phase: Issue #5 Phase A follow-up controller and synthetic WebUI wrapper implemented and tested in isolation; live wrapper tests await the existing chat stack. PR #4 remains the preset documentation dependency.
+Phase: Issue #5 Phase A bounded wrapper live synthetic tests completed with unresolved model-completion failures; temporary artifacts removed and configuration preserved. PR #4 remains the preset documentation dependency.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -16,12 +16,12 @@ Implementation is administrative-only. The existing corpus researcher is complet
 - Administrative Assistant is a distinct selectable preset on the existing GPT-OSS backend, with Native calling, temperature 0.1, top-p 0.9, maximum output 4096, no tool/knowledge attachments, and disabled built-in capabilities.
 - Consistent local backup, isolated restore and scoped rollback, synthetic administrative UI checks, backend native no-op call syntax, and existing-configuration comparisons passed.
 - The existing HFE Pipe completed one benign synthetic no-evidence query without service error or citations. This is a functional smoke check, not corpus quality evaluation or a new research feature.
-- Research/global configuration and shared server settings were preserved. No accounts, tools, apps, controller, or integrations were added.
+- Research/global configuration and shared server settings were preserved. The original preset stage added no accounts, executable tools or integrations; later controller tests were temporary and have been cleaned up.
 - See docs/ADMINISTRATIVE_SETUP.md for exact scope, limitations, and rollback.
 
 ## Remaining untested / unimplemented
 
-Reliable production multi-tool execution (basic synthetic execution is now proven); enforceable permissions for future integrations; GPU combined-workload performance; external-provider readiness; administrative workflow controller, approval execution, and provider read-back verification. The current tool-free preset is for planning/drafting, not autonomous actions. Research retrieval/citation quality was not re-evaluated.
+Reliable production multi-tool execution (basic synthetic execution is proven); enforceable permissions for future integrations; GPU combined-workload performance; external-provider readiness; production controller integration, approval execution and provider read-back verification. The current tool-free preset is for planning/drafting, not autonomous actions. Research retrieval/citation quality was not re-evaluated.
 
 ## Issue #5 Phase A results
 
@@ -33,7 +33,7 @@ Reliable production multi-tool execution (basic synthetic execution is now prove
 
 ## Next action
 
-Review PR #4, Phase A evidence, the controller core, and the stacked synthetic WebUI wrapper. Fifty-nine offline tests pass under the installed Python 3.11 runtime; the installed WebUI loader accepts the bundle in isolated scratch storage. See `docs/ADMIN_WEBUI_WRAPPER.md` for the contract and untested live boundary. Next reopen the existing HFE Chat shortcut, validate the temporary synthetic Pipe through the UI, clean it up and compare configuration before permanent deployment approval. No live installation or account connection occurred. Select provider/resources/scopes afterward. No automatic merges, shared tuning, upgrades, or consequential actions.
+Review PR #4, Phase A evidence, PR #8's core and draft PR #9's wrapper/live results. Sixty-five offline tests pass under the installed Python 3.11 runtime. Live bounded failures, eight-action termination, cancelled status and regeneration rejection passed; consistent final-answer completion did not. See `docs/ADMIN_WEBUI_LIVE_RESULTS.md` for cases that were not exercised and deployment limitations. Temporary Pipe/model metadata removed, dedicated ledger quarantined, protected configuration comparison passed. Next resolve the synthetic completion/parser contract or review deterministic rendering in a fixed-step workflow before repeat tests and any permanent deployment approval. No account connection, automatic merges, shared tuning, upgrades or consequential actions.
 
 ## Decision log
 

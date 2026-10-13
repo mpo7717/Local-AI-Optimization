@@ -190,12 +190,14 @@ class ControllerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(out.reason, "MODEL_TIMEOUT")
         self.assertTrue(cancelled)
 
-    async def test_whole_workflow_deadline_stops_multiple_individually_fast_rounds(self):
+    async def test_whole_workflow_deadline_cancels_a_pending_later_round(self):
         number = 0
         async def paced(messages, specs):
             nonlocal number
-            await asyncio.sleep(0.1)
             number += 1
+            if number == 3:
+                await asyncio.Event().wait()
+            await asyncio.sleep(0.01)
             return batch(call(str(number), number))
         out = await self.run_script(paced, self.controller(deadline=0.25, model_timeout=0.25, tool_timeout=0.1))
         self.assertEqual(out.reason, "WORKFLOW_TIMEOUT")
