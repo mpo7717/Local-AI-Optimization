@@ -1,7 +1,7 @@
 # Project Status
 
-Last coordination update: 2026-10-12.
-Phase: Issue #5 Phase A answer reliability follow-up implemented for review: native diagnostics and optional fixed-step synthetic reads. Earlier live completion failures remain unresolved; no production deployment. PR #4 remains the preset documentation dependency.
+Last coordination update: 2026-10-13.
+Phase: offline integration preparation complete for review while OVMS serves another project. Google Workspace, Canva and Zoom candidates prepared; no accounts connected or live config changed. Phase A code remains saved; model testing is deferred.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -33,7 +33,7 @@ Reliable production multi-tool execution (basic synthetic execution is proven); 
 
 ## Next action
 
-Review PR #4, Phase A evidence, PR #8's core and draft PR #9's wrapper/live results and reliability follow-up. Seventy-four offline tests pass under the installed Python 3.11 runtime, and the updated bundle passes the isolated WebUI loader. Six fresh direct synthetic OVMS diagnostics produced verified reads/retry and expected permission/malformed stops, but did not reproduce earlier UI completion failures or establish a reliability rate. An explicit fixed-read mode now renders validated data and receipts without model calls; native remains the default. See `docs/ADMIN_ANSWER_RELIABILITY.md` for the contract and evidence limits. Next review the fixed-read contract, then temporarily test that mode through WebUI before proposing permanent routing. Earlier temporary artifacts remain removed; this follow-up made no production configuration changes. No account connection, automatic merges, shared tuning, upgrades or consequential actions.
+Review the offline connection/scope proposal in `docs/ADMIN_INTEGRATION_PREPARATION.md`, then select approved Google project-document resources and registration/consent for the live connection stage. Ten remote candidates, synthetic source fixtures and an exact offline catalog reviewer are prepared. Eighty-two offline tests pass under installed Python 3.11. Host inspection found suffix tool filters and user-level connection grants; these are not sufficient profile/exact-operation enforcement. Provider eligibility/authentication, token protection and a bounded direct-read invocation path remain gates before live content testing. No model/server requests, installations, real account connections or production configuration edits were made in this preparation stage. Prior Phase A reliability limits remain documented in PR #9; model testing is deferred while the shared backend serves another project. No automatic merges or deployment.
 
 ## Decision log
 
@@ -45,3 +45,4 @@ Review PR #4, Phase A evidence, PR #8's core and draft PR #9's wrapper/live resu
 - Issue #3 authorized reversible preset setup and synthetic checks only.
 - PR #4 follow-ups: live functional preservation smoke passed; PR #2 merged first; overlapping STATUS.md reconciled without discarding inspected facts or implementation results.
 - Issue #5 Phase A is synthetic-only; proven basic tool execution does not establish reliable bounded workflows or provider readiness.
+- 2026-10-13: owner assigned architecture coordination and review to Codex, prioritized integration capability testing before models, and requested offline setup while OVMS is in use. Google Workspace/Canva/Zoom read connections are preparation candidates, not granted scopes. Daily briefing target remains 07:00 Pacific weekdays plus on demand; no automation enabled.

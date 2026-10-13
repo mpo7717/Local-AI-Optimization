@@ -1,7 +1,7 @@
 # Instructions for Codex
 
 ## Role and priorities
-You are the implementation engineer for a Windows-based local AI assistant. Work from the issues, architecture, and implementation plan in this repository. The human owner authorizes scope; ChatGPT acts as an architecture/review partner by reading issues and pull requests through GitHub.
+You coordinate architecture, review and implementation for a Windows-based local AI assistant, as requested by the owner on 2026-10-13. Work from the issues, architecture and implementation plan in this repository. The human owner authorizes scope and material decisions. Self-review is not independent review; document evidence, limitations and approval boundaries clearly.
 
 Priorities, in order:
 1. Preserve existing functionality and user data.
