@@ -36,9 +36,44 @@ class Pipe:
         "BIRCH-002": {"project_id": "BIRCH-002", "owner": "Sam", "due_day": "Thursday", "status": "review"},
     }
 
-    def __init__(self, *, ledger_path=None, completion=None, limits=None):
+    def __init__(self, *, ledger_path=None, completion=None, limits=None, execution_mode="native"):
         # Optional constructor overrides are for trusted isolated tests only.
+        if execution_mode not in {"native", "fixed_read"}:
+            raise ValueError("Unsupported execution mode")
         self.ledger_path, self.completion, self.limits = ledger_path, completion, limits or {}
+        self.execution_mode = execution_mode
+
+    @staticmethod
+    def _fixed_read_completion(query, scenario):
+        """Host-owned two-step plan; only validated controller results are rendered.
+
+        This adapter uses the controller envelope, but never invokes a model.
+        It is selected explicitly, never used as a fallback after a native stop.
+        """
+        calls = 0
+
+        async def complete(messages, specs):
+            nonlocal calls
+            calls += 1
+
+            def call(name, args):
+                return {"role": "assistant", "content": None, "tool_calls": [{
+                    "type": "function", "id": f"fixed-read-{calls}", "function": {
+                        "name": name, "arguments": json.dumps(args)}}]}
+
+            results = [json.loads(message["content"]) for message in messages if message["role"] == "tool"]
+            if not results:
+                return call("find_project", {"query": query})
+            project_id = results[0]["data"]["project_id"]
+            if len(results) == 1 or not results[-1]["ok"]:
+                return call("read_project", {"project_id": project_id, "scenario": scenario})
+            result = results[-1]
+            data = result["data"]
+            answer = f"{data['project_id']}: owner {data['owner']}; due {data['due_day']}; status {data['status']}."
+            return {"role": "assistant", "content": json.dumps({
+                "answer": answer, "receipts": [result["receipt"]]})}
+
+        return complete
 
     async def _complete(self, messages, specs):
         import aiohttp  # Already present in the inspected WebUI runtime.
@@ -134,6 +169,16 @@ class Pipe:
         task = messages[-1].get("content")
         if messages[-1].get("role") != "user" or type(task) is not str or not task or len(task) > 8192:
             return stop("TASK_INVALID")
+        # Explicit finite task grammar: do not silently ignore extra requests,
+        # writes, multiple projects, or model instructions in fixed-step mode.
+        fixed_match = None
+        if self.execution_mode == "fixed_read":
+            fixed_match = re.fullmatch(
+                r"(?:look up|read)(?: the)? (alder|birch)(?: project)?(?: facts)?"
+                r"(?: with (timeout_once|persistent_timeout|permission_denied|malformed_result|prompt_injection))?[.!]?",
+                task.strip(), flags=re.IGNORECASE)
+            if not fixed_match:
+                return stop("FIXED_READ_TASK_UNSUPPORTED")
         # Deterministic supported-task boundary. This is deliberately a fixture,
         # not a universal natural-language administrative verifier.
         names = {name for name in ("alder", "birch") if re.search(r"\b" + name + r"\b", task.lower())}
@@ -144,7 +189,8 @@ class Pipe:
                        "malformed_result", "prompt_injection") if name in task]
         if len(fault_names) > 1:
             return stop("AMBIGUOUS_SCENARIO")
-        requested_scenario = fault_names[0] if fault_names else "normal"
+        requested_scenario = (fixed_match.group(2).lower() if fixed_match and fixed_match.group(2)
+                              else fault_names[0] if fault_names else "normal")
         try:
             if self.ledger_path is None:
                 from open_webui.config import DATA_DIR
@@ -156,7 +202,7 @@ class Pipe:
             return stop("LEDGER_UNAVAILABLE")
         if denial:
             return stop(denial)
-        await self._status(__event_emitter__, "Running bounded synthetic project lookup", False)
+        await self._status(__event_emitter__, "Running bounded synthetic project lookup (" + self.execution_mode + ")", False)
         attempts = {}
 
         async def find(args, context):
@@ -205,17 +251,26 @@ class Pipe:
                   + "Receipts must contain the actual successful read receipt from the tool, never a placeholder. "
                   + "No markdown fences or extra prose. The answer string must equal exactly: " + expected)
         try:
+            complete = (self._fixed_read_completion(fixed_match.group(1).lower(), requested_scenario)
+                        if fixed_match else self.completion or self._complete)
             outcome = await Controller(tools, **self.limits).run(prompt,
                 Context("administrative-assistant", __user__["id"], workflow_id),
-                self.completion or self._complete, verify)
+                complete, verify)
         except asyncio.CancelledError:
             await self._status(__event_emitter__, "Synthetic workflow cancelled: no external action performed", True)
             raise  # Tombstone survives cancellation; never retry with a fresh budget.
         except Exception:
             await self._status(__event_emitter__, "Synthetic workflow stopped: CONTROLLER_FAILURE", True)
             return stop("CONTROLLER_FAILURE")
+        round_label = "controller rounds; no model calls" if fixed_match else "model rounds"
+        diagnostic = ""
+        if outcome.reason == "FINAL_NOT_VERIFIED":
+            codes = {"FINAL_FORMAT_INVALID", "FINAL_FIELDS_INVALID", "FINAL_EVIDENCE_INVALID", "FINAL_VERIFIER_REJECTED"}
+            for event in outcome.events:
+                if event.get("kind") == "rejection" and event.get("code") in codes:
+                    diagnostic = " [" + event["code"] + "]"
         await self._status(__event_emitter__, "Synthetic workflow " + outcome.status + ": " + outcome.reason
-                           + f" ({outcome.actions} actions, {outcome.model_rounds} model rounds)", True)
+                           + diagnostic + f" ({outcome.actions} actions, {outcome.model_rounds} {round_label})", True)
         if outcome.status != "verified":
             return stop(outcome.reason)
         receipts = ", ".join(item["receipt"] for item in outcome.evidence if item["data"] == record)

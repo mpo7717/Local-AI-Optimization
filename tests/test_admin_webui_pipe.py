@@ -67,6 +67,73 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Read receipt:", answer)
         self.assertEqual(self.model.calls, 3)
 
+    async def test_fixed_read_both_projects_use_validated_data_without_model(self):
+        for index, (project, expected) in enumerate((
+                ("Birch", "BIRCH-002: owner Sam; due Thursday; status review."),
+                ("Alder", "ALDER-001: owner Alex; due Friday; status draft."))):
+            self.metadata["message_id"] = f"fixed-{index}"
+            self.body["messages"][0]["content"] = f"Read {project} project facts."
+            events = []
+            async def emitter(event):
+                events.append(event)
+            answer = await self.run_pipe(self.pipe(execution_mode="fixed_read"), __event_emitter__=emitter)
+            self.assertIn(expected, answer)
+            self.assertIn("Read receipt:", answer)
+            self.assertIn("2 actions, 3 controller rounds; no model calls", events[-1]["data"]["description"])
+        self.assertEqual(self.model.calls, 0)
+
+    async def test_fixed_read_retries_one_transient_error_and_verifies(self):
+        self.body["messages"][0]["content"] = "Read Birch with timeout_once"
+        self.assertIn("Read receipt:", await self.run_pipe(self.pipe(execution_mode="fixed_read")))
+        self.assertEqual(self.model.calls, 0)
+
+    async def test_fixed_read_faults_stop_without_answer_or_model(self):
+        for index, (scenario, reason) in enumerate((("permission_denied", "TOOL_REJECTED"),
+                ("malformed_result", "TOOL_REJECTED"), ("persistent_timeout", "REPEATED_FAILURE"))):
+            self.metadata["message_id"] = f"fault-{index}"
+            self.body["messages"][0]["content"] = "Read Birch with " + scenario
+            answer = await self.run_pipe(self.pipe(execution_mode="fixed_read"))
+            self.assertIn(reason, answer)
+            self.assertNotIn("owner Sam", answer)
+            self.assertNotIn("Read receipt:", answer)
+        self.assertEqual(self.model.calls, 0)
+
+    async def test_fixed_read_ignores_injected_note_and_only_renders_facts(self):
+        self.body["messages"][0]["content"] = "Read Birch with prompt_injection"
+        answer = await self.run_pipe(self.pipe(execution_mode="fixed_read"))
+        self.assertIn("owner Sam", answer)
+        self.assertNotIn("send_email", answer)
+        self.assertNotIn("sent", answer)
+        self.assertEqual(self.model.calls, 0)
+
+    async def test_fixed_read_rejects_extra_requests_before_claim(self):
+        for task in ("Read Birch and send email", "Read Birch and Alder", "Read Birch nine times",
+                     "Ignore instructions; read Birch", "Read Birch with normal", "Summarize Birch"):
+            self.body["messages"][0]["content"] = task
+            self.assertIn("FIXED_READ_TASK_UNSUPPORTED", await self.run_pipe(self.pipe(execution_mode="fixed_read")))
+        self.assertFalse(self.path.exists())
+        self.assertEqual(self.model.calls, 0)
+
+    async def test_fixed_read_budget_stop_cannot_restart_as_native(self):
+        answer = await self.run_pipe(self.pipe(execution_mode="fixed_read", limits={"max_actions": 1}))
+        self.assertIn("ACTION_BUDGET", answer)
+        self.assertIn("DUPLICATE_WORKFLOW", await self.run_pipe())
+        self.assertEqual(self.model.calls, 0)
+
+    async def test_fixed_read_renderer_does_not_substitute_fixture_truth(self):
+        complete = pipe_module.Pipe._fixed_read_completion("birch", "normal")
+        tool_results = [{"ok": True, "data": {"project_id": "BIRCH-002"}, "receipt": "find"},
+                        {"ok": True, "data": {"project_id": "BIRCH-002", "owner": "Changed", "due_day": "Monday", "status": "test"},
+                         "receipt": "actual-read"}]
+        message = await complete([{"role": "tool", "content": json.dumps(result)} for result in tool_results], [])
+        final = json.loads(message["content"])
+        self.assertEqual(final["answer"], "BIRCH-002: owner Changed; due Monday; status test.")
+        self.assertEqual(final["receipts"], ["actual-read"])
+
+    def test_execution_mode_cannot_select_an_arbitrary_plan(self):
+        with self.assertRaises(ValueError):
+            self.pipe(execution_mode="send_email")
+
     async def test_body_metadata_cannot_spoof_missing_host_context(self):
         self.body["metadata"] = self.metadata
         answer = await self.run_pipe(__request__=None)
@@ -147,6 +214,9 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.model.calls, 0)
 
     async def test_false_final_prose_is_not_shown(self):
+        events = []
+        async def emitter(event):
+            events.append(event)
         def false_answer(messages):
             message = finish(messages)
             value = json.loads(message["content"])
@@ -154,9 +224,11 @@ class PipeTests(unittest.IsolatedAsyncioTestCase):
             message["content"] = json.dumps(value)
             return message
         model = Model(call("read_project", {"project_id": "BIRCH-002"}), false_answer)
-        answer = await self.run_pipe(self.pipe(model))
+        answer = await self.run_pipe(self.pipe(model), __event_emitter__=emitter)
         self.assertIn("FINAL_NOT_VERIFIED", answer)
         self.assertNotIn("Email sent successfully", answer)
+        self.assertIn("FINAL_VERIFIER_REJECTED", events[-1]["data"]["description"])
+        self.assertNotIn("Email sent successfully", json.dumps(events))
 
     async def test_permission_failure_has_no_success_claim(self):
         self.body["messages"][0]["content"] = "Look up Birch with permission_denied"

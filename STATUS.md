@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-12.
-Phase: Issue #5 Phase A bounded wrapper live synthetic tests completed with unresolved model-completion failures; temporary artifacts removed and configuration preserved. PR #4 remains the preset documentation dependency.
+Phase: Issue #5 Phase A answer reliability follow-up implemented for review: native diagnostics and optional fixed-step synthetic reads. Earlier live completion failures remain unresolved; no production deployment. PR #4 remains the preset documentation dependency.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -33,7 +33,7 @@ Reliable production multi-tool execution (basic synthetic execution is proven); 
 
 ## Next action
 
-Review PR #4, Phase A evidence, PR #8's core and draft PR #9's wrapper/live results. Sixty-five offline tests pass under the installed Python 3.11 runtime. Live bounded failures, eight-action termination, cancelled status and regeneration rejection passed; consistent final-answer completion did not. See `docs/ADMIN_WEBUI_LIVE_RESULTS.md` for cases that were not exercised and deployment limitations. Temporary Pipe/model metadata removed, dedicated ledger quarantined, protected configuration comparison passed. Next resolve the synthetic completion/parser contract or review deterministic rendering in a fixed-step workflow before repeat tests and any permanent deployment approval. No account connection, automatic merges, shared tuning, upgrades or consequential actions.
+Review PR #4, Phase A evidence, PR #8's core and draft PR #9's wrapper/live results and reliability follow-up. Seventy-four offline tests pass under the installed Python 3.11 runtime, and the updated bundle passes the isolated WebUI loader. Six fresh direct synthetic OVMS diagnostics produced verified reads/retry and expected permission/malformed stops, but did not reproduce earlier UI completion failures or establish a reliability rate. An explicit fixed-read mode now renders validated data and receipts without model calls; native remains the default. See `docs/ADMIN_ANSWER_RELIABILITY.md` for the contract and evidence limits. Next review the fixed-read contract, then temporarily test that mode through WebUI before proposing permanent routing. Earlier temporary artifacts remain removed; this follow-up made no production configuration changes. No account connection, automatic merges, shared tuning, upgrades or consequential actions.
 
 ## Decision log
 

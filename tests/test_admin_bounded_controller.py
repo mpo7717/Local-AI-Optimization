@@ -68,6 +68,20 @@ class ControllerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((out.status, out.reason, out.actions, out.model_rounds), ("verified", "OK", 2, 3))
         self.assertEqual(out.answer, "Observed 2")
 
+    async def test_final_diagnostics_distinguish_failures_without_raw_content(self):
+        cases = [("private synthetic prose", "FINAL_FORMAT_INVALID"),
+                 (json.dumps({"answer": "private synthetic prose"}), "FINAL_FIELDS_INVALID"),
+                 (json.dumps({"answer": "private synthetic prose", "receipts": ["fake"]}), "FINAL_EVIDENCE_INVALID"),
+                 (json.dumps({"answer": "private synthetic prose", "receipts": ["synthetic-1"]}), "FINAL_VERIFIER_REJECTED")]
+        for content, expected in cases:
+            self.executed.clear()
+            out = await self.run_script(Script(batch(call("read")), {"role": "assistant", "content": content}))
+            self.assertEqual(out.reason, "FINAL_NOT_VERIFIED")
+            self.assertEqual(out.events[-1], {"kind": "rejection", "code": expected})
+            self.assertEqual(out.answer, "")
+            self.assertNotIn("private synthetic prose", json.dumps(out.events))
+            self.assertNotIn("synthetic-1", json.dumps(out.events))
+
     async def test_malformed_channel_marker_stops_before_any_batch_member_executes(self):
         out = await self.run_script(Script(batch(call("a"), call("b", name="read_record<|channel|>commentary"))))
         self.assertEqual(out.reason, "TOOL_NOT_ALLOWED")

@@ -2,6 +2,8 @@
 
 Issue #5 Phase A follow-up, stacked on the bounded-controller core. Implemented, tested in isolation and temporarily tested through live WebUI, then removed. **Not accepted for permanent deployment:** native calls and final answers remain inconsistent. No provider connection, credential handling, real resource integration, external write, new package, or new service is included. See `ADMIN_WEBUI_LIVE_RESULTS.md`.
 
+The subsequent answer-reliability update adds sanitized terminal rejection codes and an explicitly selected `fixed_read` mode, while preserving native mode as the default. Fixed reads use a finite host-owned plan and render validated data without model calls; unsupported requests are rejected rather than partially answered. See `ADMIN_ANSWER_RELIABILITY.md` for the narrow contract, 74 current tests and direct diagnostic observations. This mode is not installed or accepted through the live chat route.
+
 ## Integration
 
 `tools/admin_webui_pipe.py` supplies an in-process `Pipe` for a separate temporary model ID, `administrative_bounded_test`. It does not change the existing `administrative-assistant` preset or the researcher. `tools/build_admin_pipe.py` concatenates the reviewed controller and wrapper into one self-contained Python import file:
@@ -26,7 +28,7 @@ Early failures return a visible stop code. Started workflows emit bounded status
 
 ## Verified evidence and limitations
 
-- 65 offline synthetic tests pass under the installed WebUI Python 3.11 runtime: 26 controller, 24 wrapper and 15 existing fixture tests. New regressions cover per-model context enrichment, explicit memory denial, cancellation status and origin-based regeneration protection. The deadline regression now blocks a later round deterministically rather than relying on several short sleeps under workstation load.
+- At the original live-test revision, 65 offline synthetic tests passed under the installed WebUI Python 3.11 runtime: 26 controller, 24 wrapper and 15 existing fixture tests. Those regressions cover per-model context enrichment, explicit memory denial, cancellation status and origin-based regeneration protection. The deadline regression blocks a later round deterministically rather than relying on several short sleeps under workstation load. The subsequent reliability revision has 74 passing tests, as detailed in `ADMIN_ANSWER_RELIABILITY.md`.
 - The installed loader accepts the bundle in isolated scratch storage. Temporary live import, exact trusted context, native transport, controlled loop stops, cancellation and replay rejection were exercised. WebUI formats saved Python; AST comparison verified equivalence to the reviewed bundle.
 - A consistent private backup and protected hashes were refreshed before live edits. The temporary Function and model override were removed and its dedicated ledger quarantined locally. Final model/function/tool/knowledge/access-grant/global-config comparisons match the fresh baseline. No private records, logs, paths, screenshots or backup contents are published to GitHub.
 - The earlier service-availability blocker was resolved by the owner opening the existing HFE Chat shortcut. No launcher, startup method, shared serving settings or research development changed.
@@ -34,6 +36,6 @@ Early failures return a visible stop code. Started workflows emit bounded status
 
 ## Next review and approval boundary
 
-Review the live results before adding more integration. Investigate the actual synthetic completion/parser contract or adopt a reviewed fixed-step workflow that renders validated tool data deterministically. Do not loosen receipt/claim verification or repair unknown tool names to make tests appear successful. Any repeat live test should refresh the backup, import only the private fixture, disable test model capabilities before prompts, use Connections' supported Refresh action for the cached model list, and repeat scoped cleanup/configuration comparison.
+Review the live results and the explicit fixed-read option before adding more integration. Fresh direct diagnostics did not reproduce the earlier UI failures; the new sanitized codes permit more precise future diagnosis. Review the finite task contract before testing the fixed-read mode through WebUI. Do not loosen receipt/claim verification or repair unknown tool names to make tests appear successful. Any repeat live test should refresh the backup, import only the private fixture, disable test model capabilities before prompts, use Connections' supported Refresh action for the cached model list, and repeat scoped cleanup/configuration comparison.
 
 After review and successful synthetic live tests, seek approval for any permanent routing of the Administrative Assistant to a bounded Pipe. Provider/resource/scopes, OAuth consent, real access, durable approval policies and external actions remain separate decisions. No automatic merge or deployment is proposed.
