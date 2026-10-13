@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260">
+  <title>Synthetic Alder review process</title>
+  <desc>Start leads to Review. Review branches to Accept or Revise.</desc>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#334155"/></marker></defs>
+  <rect width="720" height="260" fill="white"/>
+  <g fill="#e2e8f0" stroke="#334155" stroke-width="2">
+    <rect id="start" x="30" y="100" width="140" height="60" rx="8"/>
+    <rect id="review" x="260" y="100" width="140" height="60" rx="8"/>
+    <rect id="accept" x="530" y="30" width="140" height="60" rx="8"/>
+    <rect id="revise" x="530" y="170" width="140" height="60" rx="8"/>
+  </g>
+  <g fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)">
+    <path id="start-review" d="M170,130 L255,130"/>
+    <path id="review-accept" d="M400,120 L525,60"/>
+    <path id="review-revise" d="M400,140 L525,200"/>
+  </g>
+  <g font-family="Arial,sans-serif" font-size="20" text-anchor="middle" fill="#0f172a">
+    <text x="100" y="137">Start</text><text x="330" y="137">Review</text>
+    <text x="600" y="67">Accept</text><text x="600" y="207">Revise</text>
+  </g>
+</svg>

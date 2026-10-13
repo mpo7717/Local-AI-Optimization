@@ -1,0 +1,30 @@
+{
+  "synthetic": true,
+  "project": "Alder Integration Sandbox",
+  "people": [{"name": "Alex", "email": "alex@example.invalid"}, {"name": "Sam", "email": "sam@example.invalid"}],
+  "document": {
+    "title": "Alder Project Brief",
+    "tabs": [{"title": "Overview", "facts": {"owner": "Alex", "status": "review", "due_date": "2026-10-23"}},
+             {"title": "Decisions", "facts": {"reviewer": "Sam", "approved": false}}],
+    "unresolved_suggestion": {"field": "due_date", "proposed": "2026-10-26", "accepted": false},
+    "comment": "Synthetic review comment: confirm due date before scheduling."
+  },
+  "spreadsheet": {
+    "sheets": [{"title": "Costs", "hidden": false,
+      "rows": [["Item", "Quantity", "Unit cost", "Total"], ["Workshop", 4, 125, "=B2*C2"],
+               ["Review", 2, 80, "=B3*C3"], ["Total", null, null, "=SUM(D2:D3)"]],
+      "expected_effective_values": {"D2": 500, "D3": 160, "D4": 660}},
+      {"title": "Controls", "hidden": true, "rows": [["Error check", "=1/0"]],
+       "expected_error": {"B1": "DIVIDE_BY_ZERO"}}],
+    "chart_recipe": {"type": "COLUMN", "source": "Costs!A1:A3 and Costs!D1:D3"}
+  },
+  "presentation": {
+    "slides": [{"title": "Alder overview", "text": "Owner Alex; status review; due 23 October 2026.", "notes": "Presenter-only detail: approval is pending."},
+               {"title": "Review process", "diagram_source": "diagram.svg", "notes": "Accept and revise are separate branches."},
+               {"title": "Costs", "table_source": "spreadsheet.Costs", "notes": "Expected total is 660."}]
+  },
+  "meeting": {"topic": "Alder review", "transcript_source": "meeting.vtt", "decision": "No meeting time agreed",
+              "action": {"owner": "Sam", "task": "Review the brief before proposing a meeting"}},
+  "expected_diagram_edges": [["Start", "Review"], ["Review", "Accept"], ["Review", "Revise"]],
+  "provider_resources_created": false
+}
