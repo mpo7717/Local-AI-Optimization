@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-12.
-Phase: Issue #5 Phase A synthetic tool-path validation completed; native reliability failures documented for review. PR #4 remains the preset documentation dependency.
+Phase: Issue #5 Phase A follow-up bounded controller core implemented with isolated synthetic regressions; live WebUI wrapper remains pending. PR #4 remains the preset documentation dependency.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -33,7 +33,7 @@ Reliable production multi-tool execution (basic synthetic execution is now prove
 
 ## Next action
 
-Review PR #4 and the stacked Phase A evidence. Before account connection, authorize and validate a minimal administrative-only bounded adapter addressing observed native-path failures. Select provider/resources/scopes afterward. No automatic merges, live provider enablement, shared tuning, upgrades, or consequential actions.
+Review PR #4, Phase A evidence, and the stacked bounded-controller core. Forty-one offline tests pass (26 controller and 15 fixture); no live deployment occurred. See `docs/ADMIN_BOUNDED_CONTROLLER.md` for the host contract and limitations. Next implement and validate the minimal administrative-only WebUI wrapper with synthetic cases before deployment approval. Select provider/resources/scopes afterward. No automatic merges, live provider enablement, shared tuning, upgrades, or consequential actions.
 
 ## Decision log
 
