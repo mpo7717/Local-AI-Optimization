@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-13.
-Phase: offline integration preparation complete for review while OVMS serves another project. Google Workspace, Canva and Zoom candidates prepared; no accounts connected or live config changed. Phase A code remains saved; model testing is deferred.
+Phase: Google REST authorization preparation in progress while OVMS serves another project. Separate administrative Cloud project and OAuth branding confirmed; owner is not enrolled in the Workspace MCP preview. No provider grant or WebUI integration connected. Desktop OAuth helper is not deployed; actual DPAPI preflight fails in the agent session and requires a regular Windows-session check. Model testing remains deferred.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
