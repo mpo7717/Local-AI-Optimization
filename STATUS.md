@@ -1,7 +1,7 @@
 # Project Status
 
 Last coordination update: 2026-10-12.
-Phase: Stage 1 preset-only Administrative Assistant implemented; PR #4 follow-ups addressed, architecture review pending.
+Phase: Issue #5 Phase A synthetic tool-path validation completed; native reliability failures documented for review. PR #4 remains the preset documentation dependency.
 Repository: public; sanitized implementation metadata only.
 
 ## Scope
@@ -21,11 +21,19 @@ Implementation is administrative-only. The existing corpus researcher is complet
 
 ## Remaining untested / unimplemented
 
-Full WebUI multi-tool execution; enforceable permissions for future integrations; GPU combined-workload performance; external-provider readiness; administrative workflow controller, approval execution, and provider read-back verification. The current tool-free preset is for planning/drafting, not autonomous actions. Research retrieval/citation quality was not re-evaluated.
+Reliable production multi-tool execution (basic synthetic execution is now proven); enforceable permissions for future integrations; GPU combined-workload performance; external-provider readiness; administrative workflow controller, approval execution, and provider read-back verification. The current tool-free preset is for planning/drafting, not autonomous actions. Research retrieval/citation quality was not re-evaluated.
+
+## Issue #5 Phase A results
+
+- Actual native WebUI-to-OVMS-to-local-tool-to-answer execution demonstrated on synthetic records, including two-step lookup/read and verified execution receipts.
+- Fifteen deterministic fixture tests pass. Twelve UI attempts produced ten expected case outcomes; repeated-call formatting failed and a budget workflow did not complete in its observation window.
+- Real account/tool enablement is not accepted. Scoped iteration, deadline, allowlist, validation and termination controls need a separate administrative adapter stage before consent.
+- Temporary private fixture removed; pre-test model/function/tool/knowledge/grant/global configuration comparison passed. No shared OVMS changes, research work, real accounts, packages, or new services.
+- Read `docs/PHASE_A_RESULTS.md` and `docs/PHASE_A_INTEGRATION_DESIGN.md` for test boundaries, measured observations, design, and proposed scopes.
 
 ## Next action
 
-ChatGPT reviews the PR #4 follow-up evidence and reconciled status. PR #4 remains open; do not merge it or expand scope automatically. After owner acceptance, separately scope the next administrative read-only workflow and provider/access choices. Shared model tuning, upgrades, and consequential external actions remain unapproved.
+Review PR #4 and the stacked Phase A evidence. Before account connection, authorize and validate a minimal administrative-only bounded adapter addressing observed native-path failures. Select provider/resources/scopes afterward. No automatic merges, live provider enablement, shared tuning, upgrades, or consequential actions.
 
 ## Decision log
 
@@ -36,3 +44,4 @@ ChatGPT reviews the PR #4 follow-up evidence and reconciled status. PR #4 remain
 - Keep private security findings, backups, and operational evidence local.
 - Issue #3 authorized reversible preset setup and synthetic checks only.
 - PR #4 follow-ups: live functional preservation smoke passed; PR #2 merged first; overlapping STATUS.md reconciled without discarding inspected facts or implementation results.
+- Issue #5 Phase A is synthetic-only; proven basic tool execution does not establish reliable bounded workflows or provider readiness.
